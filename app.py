@@ -407,6 +407,7 @@ def logout():
     flash("You have logged out.", "success")
     return redirect(url_for("home"))
 
+
 # ---------------- ADMIN DASHBOARD ----------------
 
 ALLOWED_ORDER_STATUSES = (
@@ -464,9 +465,5 @@ def update_order_status(order_id):
 
 with app.app_context():
     db.create_all()
-
-
-
-
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)
