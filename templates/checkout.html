@@ -1,0 +1,198 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Checkout | Pascal Dishes Restaurant</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: Arial, sans-serif;
+            background: #fffaf3;
+            color: #29231e;
+            margin: 0;
+        }
+        header, footer {
+            background: #201914;
+            color: white;
+            padding: 20px 6%;
+        }
+        header strong { color: #f2b84b; }
+        header a { color: white; }
+        main {
+            max-width: 800px;
+            margin: 30px auto;
+            padding: 0 16px;
+        }
+        .panel {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 12px #00000010;
+        }
+        h1, h2 { margin-top: 0; }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-top: 17px;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            margin-top: 7px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font: inherit;
+        }
+        textarea { min-height: 90px; resize: vertical; }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .total { font-size: 22px; font-weight: bold; margin-top: 18px; }
+        .btn {
+            display: inline-block;
+            background: #f2b84b;
+            color: #201914;
+            border: none;
+            border-radius: 6px;
+            padding: 14px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .btn:hover { background: #e5a72f; }
+        .note {
+            background: #fff3d5;
+            padding: 12px;
+            border-radius: 6px;
+            line-height: 1.5;
+            margin-top: 15px;
+        }
+        .back { display: inline-block; margin-bottom: 18px; color: #80502c; }
+        footer { text-align: center; margin-top: 35px; }
+    </style>
+</head>
+<body>
+    <header>
+        <strong>Pascal Dishes Restaurant</strong>
+        <p><a href="/">Home</a> | <a href="/cart">Shopping Cart</a></p>
+    </header>
+
+    <main>
+        <a class="back" href="/cart">← Back to cart</a>
+        <h1>Checkout</h1>
+        <p>Welcome, {{ customer.full_name }}. Review your order below.</p>
+
+        <section class="panel">
+            <h2>Your Order</h2>
+
+            {% for item in cart_items %}
+            <div class="summary-row">
+                <span>{{ item.name }} × {{ item.quantity }}</span>
+                <strong>KSh {{ "{:,}".format(item.subtotal) }}</strong>
+            </div>
+            {% endfor %}
+
+            <div class="total">Total: KSh {{ "{:,}".format(total) }}</div>
+        </section>
+
+        <section class="panel">
+            <h2>Order Details</h2>
+
+            <form method="POST" action="{{ url_for('checkout') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                <label for="phone">Contact phone number</label>
+                <input
+                    id="phone"
+                    name="phone"
+                    type="tel"
+                    maxlength="30"
+                    placeholder="e.g. 0712345678"
+                    autocomplete="tel"
+                    required
+                >
+
+                <label for="order_type">How would you like your order?</label>
+                <select id="order_type" name="order_type" required>
+                    <option value="">-- Select order type --</option>
+                    <option value="dine_in">Dine-in at the restaurant</option>
+                    <option value="delivery">Delivery to my address</option>
+                </select>
+
+                <div id="delivery-section" hidden>
+                    <label for="delivery_address">Delivery address and directions</label>
+                    <textarea
+                        id="delivery_address"
+                        name="delivery_address"
+                        maxlength="300"
+                        placeholder="Enter your area, estate/building and directions"
+                    ></textarea>
+                </div>
+
+                <label for="payment_method">Payment method</label>
+                <select id="payment_method" name="payment_method" required>
+                    <option value="">-- Select payment method --</option>
+                    <option value="cash">Cash</option>
+                    <option value="mpesa">M-Pesa</option>
+                </select>
+
+                <div class="note" id="payment-note">
+                    Select a payment method to see its instructions.
+                </div>
+
+                <p style="margin-top:20px; line-height:1.6;">
+                    Submitting this form places your order. For M-Pesa, payment
+                    is not confirmed by this step.
+                </p>
+
+                <button class="btn" type="submit" style="margin-top:18px;">
+                    Place Order
+                </button>
+            </form>
+        </section>
+    </main>
+
+    <footer>Pascal Dishes Restaurant</footer>
+
+    <script>
+        const orderType = document.getElementById("order_type");
+        const deliverySection = document.getElementById("delivery-section");
+        const address = document.getElementById("delivery_address");
+        const paymentMethod = document.getElementById("payment_method");
+        const paymentNote = document.getElementById("payment-note");
+
+        function updateDelivery() {
+            const isDelivery = orderType.value === "delivery";
+            deliverySection.hidden = !isDelivery;
+            address.required = isDelivery;
+        }
+
+        function updatePaymentNote() {
+            if (paymentMethod.value === "cash") {
+                paymentNote.textContent =
+                    "Cash selected. Pay the restaurant when instructed at collection, service or delivery.";
+            } else if (paymentMethod.value === "mpesa") {
+                paymentNote.textContent =
+                    "M-Pesa selected. This demo records your choice but does not send an STK Push or verify payment. Wait for official payment instructions from the restaurant.";
+            } else {
+                paymentNote.textContent =
+                    "Select a payment method to see its instructions.";
+            }
+        }
+
+        orderType.addEventListener("change", updateDelivery);
+        paymentMethod.addEventListener("change", updatePaymentNote);
+
+        updateDelivery();
+        updatePaymentNote();
+    </script>
+</body>
+</html>

@@ -1,0 +1,251 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Pascal Dishes Restaurant</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f3f5f7;
+            color: #243044;
+        }
+
+        header {
+            background: #142b24;
+            color: white;
+            padding: 22px;
+        }
+
+        header h1 {
+            margin: 0 0 8px;
+        }
+
+        header p {
+            margin: 0;
+            color: #d7e8df;
+        }
+
+        main {
+            max-width: 1150px;
+            margin: 25px auto;
+            padding: 0 16px;
+        }
+
+        .top-links {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        a {
+            color: #087f5b;
+        }
+
+        .notice {
+            padding: 12px;
+            background: #d9f5e5;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .order-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px #0000000d;
+            overflow-wrap: anywhere;
+        }
+
+        .order-heading {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 12px;
+        }
+
+        .order-heading h2 {
+            margin: 0;
+        }
+
+        .details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+            margin: 18px 0;
+        }
+
+        .meal-list {
+            padding-left: 20px;
+        }
+
+        .status-form {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-top: 18px;
+        }
+
+        select, button {
+            padding: 11px;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+
+        select {
+            border: 1px solid #cbd5e1;
+            background: white;
+        }
+
+        button {
+            border: none;
+            background: #087f5b;
+            color: white;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #066747;
+        }
+
+        .empty {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+        }
+
+        @media (max-width: 500px) {
+            header {
+                padding: 18px 14px;
+            }
+
+            .order-card {
+                padding: 15px;
+            }
+
+            .status-form select,
+            .status-form button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Pascal Dishes Restaurant</h1>
+        <p>Administrator Dashboard — Manage customer orders</p>
+    </header>
+
+    <main>
+        <div class="top-links">
+            <a href="{{ url_for('home') }}">View Restaurant Website</a>
+
+            <form method="POST" action="{{ url_for('logout') }}">
+                <input type="hidden" name="csrf_token"
+                       value="{{ csrf_token() }}">
+                <button type="submit">Log Out</button>
+            </form>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="notice">{{ message }}</div>
+            {% endfor %}
+        {% endwith %}
+
+        <h2>Customer Orders ({{ orders|length }})</h2>
+
+        {% if orders %}
+            {% for order in orders %}
+                <section class="order-card">
+                    <div class="order-heading">
+                        <h2>Order #{{ order.id }}</h2>
+                        <strong>{{ order.status }}</strong>
+                    </div>
+
+                    <div class="details">
+                        <div>
+                            <strong>Customer:</strong><br>
+                            {{ order.customer_name }}<br>
+                            {{ order.phone }}
+                        </div>
+
+                        <div>
+                            <strong>Order type:</strong><br>
+                            {{ order.order_type|replace('_', ' ')|title }}
+
+                            {% if order.delivery_address %}
+                                <br><strong>Delivery address:</strong><br>
+                                {{ order.delivery_address }}
+                            {% endif %}
+                        </div>
+
+                        <div>
+                            <strong>Payment:</strong><br>
+                            {{ order.payment_method|upper }}<br>
+                            Payment status: {{ order.payment_status }}
+                        </div>
+                    </div>
+
+                    <strong>Meals ordered:</strong>
+
+                    <ul class="meal-list">
+                        {% for item in order.display_items %}
+                            <li>
+                                {{ item.name }} × {{ item.quantity }}
+                                — KSh {{ item.subtotal }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+
+                    <h3>Total: KSh {{ order.total }}</h3>
+
+                    <form class="status-form"
+                          method="POST"
+                          action="{{ url_for('update_order_status',
+                                             order_id=order.id) }}">
+
+                        <input type="hidden" name="csrf_token"
+                               value="{{ csrf_token() }}">
+
+                        <label for="status-{{ order.id }}">
+                            Update order status:
+                        </label>
+
+                        <select id="status-{{ order.id }}" name="status">
+                            {% for status in statuses %}
+                                <option value="{{ status }}"
+                                    {% if order.status == status %}
+                                        selected
+                                    {% endif %}>
+                                    {{ status }}
+                                </option>
+                            {% endfor %}
+                        </select>
+
+                        <button type="submit">Save Status</button>
+                    </form>
+                </section>
+            {% endfor %}
+        {% else %}
+            <div class="empty">
+                <h3>No orders yet</h3>
+                <p>New customer orders will appear here after checkout.</p>
+            </div>
+        {% endif %}
+    </main>
+</body>
+</html>

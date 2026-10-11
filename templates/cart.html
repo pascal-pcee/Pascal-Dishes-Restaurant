@@ -1,0 +1,103 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Your Cart | Pascal Dishes</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: Arial, sans-serif;
+            background: #fffaf3;
+            color: #29231e;
+            margin: 0;
+        }
+        header, footer {
+            background: #201914;
+            color: white;
+            padding: 20px 6%;
+        }
+        header strong { color: #f2b84b; }
+        header a { color: white; }
+        main { max-width: 850px; margin: 35px auto; padding: 0 18px; }
+        .item {
+            background: white;
+            padding: 18px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            box-shadow: 0 2px 8px #00000010;
+        }
+        .item p { margin-top: 8px; color: #6c6259; }
+        .remove {
+            background: #a93226;
+            color: white;
+            border: 0;
+            padding: 9px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .total { font-size: 23px; font-weight: bold; margin: 25px 0; }
+        .btn {
+            display: inline-block;
+            background: #f2b84b;
+            color: #201914;
+            padding: 12px 18px;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 5px 5px 5px 0;
+        }
+        .empty { background: white; padding: 25px; border-radius: 8px; }
+        footer { margin-top: 40px; text-align: center; }
+    </style>
+</head>
+<body>
+    <header>
+        <strong>Pascal Dishes Restaurant</strong>
+        <p><a href="/">← Back to Menu</a></p>
+    </header>
+
+    <main>
+        <h1>Your Shopping Cart 🛒</h1>
+
+        {% if cart_items %}
+            {% for item in cart_items %}
+            <div class="item">
+                <div>
+                    <strong>{{ item.emoji }} {{ item.name }}</strong>
+                    <p>KSh {{ "{:,}".format(item.price) }} × {{ item.quantity }}</p>
+                    <strong>Subtotal: KSh {{ "{:,}".format(item.subtotal) }}</strong>
+                </div>
+
+                <form action="{{ url_for('remove_from_cart') }}" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="item_id" value="{{ item.id }}">
+                    <button type="submit" class="remove">Remove</button>
+                </form>
+            </div>
+            {% endfor %}
+
+            <div class="total">Total: KSh {{ "{:,}".format(total) }}</div>
+
+            <a class="btn" href="/">Add More Meals</a>
+            <a class="btn" href="{{ url_for('checkout') }}">Proceed to Checkout</a>
+        {% else %}
+            <div class="empty">
+                <p>Your cart is empty.</p>
+                <br>
+                <a class="btn" href="/">Browse Our Menu</a>
+            </div>
+        {% endif %}
+    </main>
+
+    <footer>Pascal Dishes Restaurant</footer>
+</body>
+</html>

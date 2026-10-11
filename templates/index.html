@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pascal Dishes Restaurant</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: Arial, sans-serif;
+            background: #fffaf3;
+            color: #29231e;
+        }
+        header {
+            background: #201914;
+            color: white;
+            padding: 18px 6%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        header h2 { color: #f2b84b; }
+        
+nav a {
+    color: white;
+    text-decoration: none;
+    margin-left: 18px;
+    display: inline-block;
+    margin-top: 8px;
+}
+
+nav a.login-link {
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: bold;
+    margin-left: 10px;
+}
+
+nav a.customer-login {
+    background: #f2b84b;
+    color: #201914;
+}
+
+nav a.admin-login {
+    background: #277a50;
+    color: white;
+}
+
+nav a.login-link:hover {
+    opacity: 0.85;
+}
+
+        
+        .hero {
+            padding: 65px 6%;
+            text-align: center;
+            background: linear-gradient(135deg, #38251a, #80502c);
+            color: white;
+        }
+        .hero h1 {
+            font-size: clamp(30px, 5vw, 48px);
+            margin-bottom: 15px;
+        }
+        .hero p { line-height: 1.7; margin-bottom: 22px; }
+        .menu { padding: 45px 6%; }
+        .menu h2 { text-align: center; margin-bottom: 10px; font-size: 32px; }
+        .intro { text-align: center; color: #6c6259; margin-bottom: 30px; }
+        .food-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 22px;
+        }
+        .food-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 14px #00000012;
+            padding: 22px;
+            text-align: center;
+        }
+        .food-emoji { font-size: 55px; margin-bottom: 12px; }
+        .food-card h3 { margin-bottom: 10px; }
+        .food-card p { color: #6c6259; line-height: 1.5; min-height: 45px; }
+        .price { color: #8a4b15; font-size: 20px; font-weight: bold; margin: 15px 0; }
+        .btn {
+            display: inline-block;
+            border: none;
+            background: #f2b84b;
+            color: #201914;
+            padding: 12px 18px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .btn:hover { background: #e5a72f; }
+        footer {
+            background: #201914;
+            color: white;
+            text-align: center;
+            padding: 22px;
+            margin-top: 25px;
+            line-height: 1.8;
+        }
+        @media (max-width: 500px) {
+            header { justify-content: center; text-align: center; }
+            nav a { margin: 0 7px; }
+        }
+        .user-welcome {
+    display: inline-block;
+    color: #f2b84b;
+    font-weight: bold;
+    margin-left: 15px;
+    font-size: 14px;
+}
+
+.welcome-icon {
+    font-style: normal;
+    margin-right: 4px;
+}
+
+.logout-form {
+    display: inline-block;
+    margin-left: 8px;
+}
+
+.logout-button {
+    background: #a83232;
+    color: white;
+    border: none;
+    padding: 9px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.logout-button:hover {
+    background: #842525;
+}
+
+/* PROFESSIONAL FOOD MENU CARDS */
+
+.food-card {
+    background: #ffffff;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid #eeeeee;
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.08);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.food-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.14);
+}
+
+.food-emoji {
+    min-height: 125px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #fff3dc, #ffe2ad);
+    font-size: 65px;
+}
+
+.food-card-content {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.food-card h3 {
+    margin: 0 0 10px;
+    color: #202020;
+    font-size: 21px;
+}
+
+.food-description {
+    color: #666666;
+    font-size: 14px;
+    line-height: 1.7;
+    margin: 0 0 20px;
+    flex: 1;
+}
+
+.food-card-bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+    margin-top: auto;
+}
+
+.food-card .price {
+    color: #b87913;
+    font-size: 22px;
+    font-weight: 800;
+}
+
+.food-card form {
+    width: 100%;
+    margin: 0;
+}
+
+.food-card .btn {
+    width: 100%;
+    padding: 12px 16px;
+    border: none;
+    border-radius: 8px;
+    background: #173b2a;
+    color: #ffffff;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.food-card .btn:hover {
+    background: #24583e;
+}
+
+@media (max-width: 600px) {
+    .food-card-content {
+        padding: 16px;
+    }
+
+    .food-emoji {
+        min-height: 105px;
+        font-size: 55px;
+    }
+
+    .food-card h3 {
+        font-size: 19px;
+    }
+}
+
+/* CONTACT SECTION */
+.contact-section {
+    background: #f7f8f5;
+    padding: 65px 20px;
+    color: #222;
+}
+
+.contact-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.contact-section h2 {
+    font-size: 32px;
+    margin: 0 0 12px;
+    color: #173b2a;
+}
+
+.contact-intro {
+    color: #666;
+    line-height: 1.7;
+    margin: 0 auto 35px;
+    max-width: 650px;
+}
+
+.contact-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 22px;
+}
+
+.contact-card {
+    background: #fff;
+    padding: 28px 18px;
+    border-radius: 14px;
+    border: 1px solid #e8e8e8;
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.06);
+    overflow-wrap: anywhere;
+}
+
+.contact-icon {
+    font-size: 34px;
+    margin-bottom: 12px;
+}
+
+.contact-card h3 {
+    color: #173b2a;
+    margin: 0 0 10px;
+}
+
+.contact-card p {
+    color: #666;
+    line-height: 1.6;
+    font-size: 14px;
+}
+
+.contact-card a {
+    color: #a66a0b;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.contact-card a:hover {
+    text-decoration: underline;
+}
+
+.contact-note {
+    margin-top: 28px;
+    color: #555;
+    line-height: 1.7;
+}
+
+@media (max-width: 700px) {
+    .contact-section {
+        padding: 45px 16px;
+    }
+
+    .contact-section h2 {
+        font-size: 27px;
+    }
+
+    .contact-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* HAMBURGER MENU */
+.menu-toggle {
+    display: none;
+    background: #173b2a;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 13px;
+    font-size: 28px;
+    line-height: 1;
+    cursor: pointer;
+    z-index: 1001;
+}
+
+/* MOBILE NAVIGATION */
+@media (max-width: 768px) {
+    .menu-toggle {
+        display: block;
+        margin: 10px 15px 10px auto;
+    }
+
+    #navLinks {
+        display: none;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 10px 16px 18px;
+        background: #ffffff;
+        border-top: 1px solid #eeeeee;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+    }
+
+    #navLinks.active {
+        display: flex;
+    }
+
+    #navLinks > a {
+        display: block;
+        padding: 13px 10px;
+        color: #173b2a;
+        text-decoration: none;
+        overflow-wrap: anywhere;
+    }
+
+    #navLinks > a:hover {
+        background: #f2f5f2;
+    }
+
+    #navLinks .user-welcome {
+        padding: 12px 10px;
+        margin-left: 0;
+    }
+
+    #navLinks .logout-form {
+        margin: 5px 10px 12px;
+    }
+
+    #navLinks .login-link {
+        margin: 5px 0;
+        text-align: center;
+        border-radius: 6px;
+    }
+}
+
+/* HAMBURGER VISIBILITY FIX */
+#menuToggle {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: relative;
+    z-index: 9999;
+    background-color: #173b2a !important;
+    color: #ffffff !important;
+    border: 2px solid #173b2a !important;
+    border-radius: 8px;
+    padding: 10px 15px;
+    font-size: 28px;
+    line-height: 1.2;
+    cursor: pointer;
+}
+
+/* Keep navigation links hidden on small screens until opened */
+@media (max-width: 768px) {
+    #navLinks {
+        display: none;
+    }
+
+    #navLinks.active {
+        display: flex;
+    }
+}
+
+/* FIX HAMBURGER MENU AND NAVIGATION */
+@media (max-width: 768px) {
+    #navLinks {
+        display: none !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        width: 100% !important;
+        height: auto !important;
+        position: relative !important;
+        background: #ffffff !important;
+        padding: 10px 15px !important;
+        box-sizing: border-box !important;
+        overflow: visible !important;
+        z-index: 9998 !important;
+    }
+
+    #navLinks.active {
+        display: flex !important;
+    }
+
+    #navLinks a {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        color: #173b2a !important;
+        padding: 12px !important;
+        text-decoration: none !important;
+    }
+
+    #navLinks .user-welcome {
+        display: block !important;
+        color: #173b2a !important;
+        padding: 12px !important;
+    }
+
+    #navLinks .logout-form {
+        display: block !important;
+        margin: 8px 12px !important;
+    }
+
+    #navLinks .logout-button {
+        display: block !important;
+    }
+}
+
+/* WEBSITE FOOTER */
+.site-footer {
+    background: #173b2a;
+    color: #ffffff;
+    padding: 35px 20px;
+    text-align: center;
+}
+
+.footer-content h3 {
+    margin: 0 0 10px;
+    font-size: 22px;
+    color: #f2c46d;
+}
+
+.footer-content p {
+    margin: 10px 0;
+    line-height: 1.7;
+}
+
+.footer-content .copyright {
+    font-size: 13px;
+    color: #e1e8e3;
+    margin-top: 20px;
+}
+
+.footer-content a {
+    display: inline-block;
+    margin-top: 10px;
+    color: #f2c46d;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.footer-content a:hover {
+    text-decoration: underline;
+}
+
+    </style>
+</head>
+<body>
+    <header>
+        <h2>Pascal Dishes</h2>
+        
+<!-- MOBILE MENU BUTTON -->
+<button type="button"
+        class="menu-toggle"
+        id="menuToggle"
+        aria-label="Open navigation menu"
+        aria-expanded="false"
+        aria-controls="navLinks">
+    ☰
+</button>
+
+<!-- NAVIGATION LINKS -->
+<nav id="navLinks">
+    <a href="/">Home</a>
+    <a href="#menu">Our Menu</a>
+    <a href="#contact">Contact</a>
+    <a href="{{ url_for('view_cart') }}">
+        Cart 🛒 ({{ cart_count }})
+    </a>
+    <a href="{{ url_for('register') }}">Register</a>
+
+    {% if current_user.is_authenticated and not current_user.is_admin %}
+        <span class="user-welcome">
+            <i class="welcome-icon">👤</i>
+            Welcome, {{ current_user.full_name }}
+        </span>
+
+        <form action="{{ url_for('logout') }}"
+              method="POST"
+              class="logout-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button type="submit" class="logout-button">Logout</button>
+        </form>
+    {% endif %}
+
+    <a class="login-link customer-login"
+       href="{{ url_for('login') }}">
+        CUSTOMER LOGIN
+    </a>
+
+    <a class="login-link admin-login"
+       href="{{ url_for('admin_login') }}">
+        ADMINISTRATOR LOGIN
+    </a>
+</nav>
+
+    </header>
+
+    <section class="hero">
+        <h1>Welcome to Pascal Dishes Restaurant</h1>
+        <p>Delicious meals, freshly prepared.<br>
+        Great food. Great service. Every time.</p>
+        <a href="#menu" class="btn">Explore Our Menu</a>
+    </section>
+
+    <section class="menu" id="menu">
+        <h2>Our Delicious Menu</h2>
+        <p class="intro">Choose your favourite meal and add it to your cart.</p>
+
+        <div class="food-grid">
+
+{% for meal in menu_items %}
+<div class="food-card">
+
+    <div class="food-emoji">
+        {{ meal.emoji }}
+    </div>
+
+    <div class="food-card-content">
+        <h3>{{ meal.name }}</h3>
+
+        <p class="food-description">
+            {{ meal.description }}
+        </p>
+
+        <div class="food-card-bottom">
+            <div class="price">
+                KSh {{ "{:,}".format(meal.price) }}
+            </div>
+
+            <form action="{{ url_for('add_to_cart') }}" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="item_id" value="{{ meal.id }}">
+
+                <button class="btn" type="submit">
+                    + Add to Cart
+                </button>
+            </form>
+        </div>
+    </div>
+
+</div>
+{% endfor %}
+        </div>
+    </section>
+
+    <footer id="contact">
+        <strong>Pascal Dishes Restaurant</strong>
+        <p>Fresh food, excellent service.</p>
+        <p>Contact details can be added here.</p>
+    </footer>
+
+<!-- CONTACT SECTION -->
+<section id="contact" class="contact-section">
+    <div class="contact-container">
+
+        <h2>Contact Us</h2>
+        <p class="contact-intro">
+            We'd love to serve you! Contact Pascal Dishes Restaurant
+            for orders and enquiries.
+        </p>
+
+        <div class="contact-grid">
+
+            <div class="contact-card">
+                <div class="contact-icon">📞</div>
+                <h3>Call Us</h3>
+                <p>Speak to us about your order.</p>
+                <a href="tel:0707662921">0707662921</a>
+            </div>
+
+            <div class="contact-card">
+                <div class="contact-icon">✉️</div>
+                <h3>Email Us</h3>
+                <p>Send us your questions or enquiries.</p>
+                <a href="mailto:pascalkabuka0@gmail.com">
+                    pascalkabuka0@gmail.com
+                </a>
+            </div>
+
+            <div class="contact-card">
+                <div class="contact-icon">📍</div>
+                <h3>Our Location</h3>
+                <p>Visit us in Kilifi, Kenya.</p>
+                <a href="https://www.google.com/maps/search/?api=1&query=Kilifi%2C%20Kenya"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                    View Kilifi on Google Maps
+                </a>
+            </div>
+
+        </div>
+
+        <p class="contact-note">
+            <strong>Physical address:</strong>
+            Please contact us for directions to the restaurant.
+        </p>
+
+    </div>
+</section>
+<!-- END CONTACT SECTION -->
+
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const button = document.getElementById("menuToggle");
+    const menu = document.getElementById("navLinks");
+
+    if (!button || !menu) {
+        alert("Error: Hamburger button or navigation menu not found.");
+        return;
+    }
+
+    button.addEventListener("click", function () {
+        const open = !menu.classList.contains("active");
+
+        menu.classList.toggle("active", open);
+
+        menu.style.setProperty(
+            "display",
+            open ? "flex" : "none",
+            "important"
+        );
+
+        menu.style.setProperty(
+            "flex-direction",
+            "column",
+            "important"
+        );
+
+        button.textContent = open ? "✕" : "☰";
+        button.setAttribute("aria-expanded", String(open));
+    });
+});
+</script>
+
+
+<!-- WEBSITE FOOTER -->
+<footer class="site-footer">
+    <div class="footer-content">
+        <h3>Pascal Dishes Restaurant</h3>
+        <p>Delicious food, prepared with care.</p>
+
+        <p class="copyright">
+            &copy; 2026 Pascal Dishes Restaurant.
+            All rights reserved.
+        </p>
+
+        <a href="#contact">Contact Us</a>
+    </div>
+</footer>
+<!-- END WEBSITE FOOTER -->
+
+
+</body>
+</html>
